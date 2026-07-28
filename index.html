@@ -1,0 +1,1045 @@
+
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+							<style>
+								body {
+									background-color: white; /* Ensure the iframe has a white background */
+								}
+
+								
+							</style>
+                        </head>
+                        <body>
+                            <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budget Phasing Studio v13</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0a0e18; --bg-alt:#0d1220; --panel:#131a2b; --panel-2:#171f34;
+  --border:#232c44; --text:#e8ebf5; --text-dim:#8a93ac;
+  --accent:#5eead4; --accent2:#818cf8; --accent3:#f472b6; --accent4:#fbbf24;
+  --radius:16px; --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:radial-gradient(1200px 800px at 80% -10%, #16203a 0%, var(--bg) 55%);color:var(--text);}
+.app{display:flex;min-height:100vh;}
+.sidebar{width:280px;flex-shrink:0;background:linear-gradient(180deg,var(--bg-alt),var(--bg));border-right:1px solid var(--border);padding:24px 18px;display:flex;flex-direction:column;gap:20px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.brand{display:flex;flex-direction:column;gap:2px;padding:4px 6px 4px;}
+.brand h1{font-size:17px;margin:0;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;}
+.brand span{font-size:12px;color:var(--text-dim);}
+@keyframes borderGlow{
+  0%{box-shadow:0 0 0 0 rgba(94,234,212,.35), 0 10px 30px rgba(0,0,0,.35);}
+  50%{box-shadow:0 0 0 6px rgba(94,234,212,0), 0 10px 30px rgba(0,0,0,.35);}
+  100%{box-shadow:0 0 0 0 rgba(94,234,212,0), 0 10px 30px rgba(0,0,0,.35);}
+}
+.budget-hero{position:relative;background:linear-gradient(160deg, rgba(94,234,212,.14), rgba(129,140,248,.10) 60%, var(--panel));border:1.5px solid transparent;background-clip:padding-box;border-radius:18px;padding:18px 18px 16px;box-shadow:var(--shadow);animation:borderGlow 3s ease-in-out infinite;}
+.budget-hero::before{content:'';position:absolute; inset:-1.5px;border-radius:18px;padding:1.5px;background:linear-gradient(120deg, var(--accent), var(--accent2), var(--accent));-webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite:xor; mask-composite:exclude;pointer-events:none;}
+.budget-hero .hero-label{display:flex;align-items:center;gap:8px;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:800;margin-bottom:10px;}
+.budget-hero .hero-label .ic{font-size:15px;}
+.budget-hero input{width:100%;background:var(--bg-alt);border:1.5px solid rgba(94,234,212,.4);color:var(--text);padding:13px 14px;border-radius:12px;font-size:22px;font-weight:800;letter-spacing:.01em;}
+.budget-hero input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(94,234,212,.2);}
+.budget-hero .hero-suffix{font-size:12px;color:var(--text-dim);margin-top:8px;display:flex;justify-content:space-between;align-items:center;}
+.budget-hero .hero-total{font-size:13.5px;color:var(--accent);font-weight:800;}
+.nav{display:flex;flex-direction:column;gap:6px;}
+.nav button{display:flex;align-items:center;gap:10px;text-align:left;background:transparent;border:1px solid transparent;color:var(--text-dim);padding:10px 12px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;transition:.15s;width:100%;}
+.nav button:hover{background:var(--panel);color:var(--text);}
+.nav button.primary{background:rgba(94,234,212,.07);border-color:rgba(94,234,212,.22);color:var(--text);}
+.nav button.primary .dot{background:var(--accent);box-shadow:0 0 6px rgba(94,234,212,.6);}
+.nav button.active{background:linear-gradient(90deg,rgba(94,234,212,.18),rgba(129,140,248,.18));border-color:var(--accent);color:var(--text);}
+.nav button .dot{width:8px;height:8px;border-radius:50%;background:var(--text-dim);flex-shrink:0;}
+.nav button.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent);}
+.nav .section-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);padding:10px 12px 2px;font-weight:700;}
+.nav-toggle{justify-content:space-between !important;}
+.nav-toggle .chevron{margin-left:auto;transition:transform .2s;color:var(--text-dim);}
+.nav-toggle.open .chevron{transform:rotate(180deg);}
+.nav-sub{display:none;flex-direction:column;gap:6px;padding-left:14px;margin-top:2px;border-left:1px solid var(--border);}
+.nav-sub.open{display:flex;}
+.controls{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow);}
+.controls h3{margin:0 0 2px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:12px;color:var(--text-dim);}
+.field input{background:var(--bg-alt);border:1px solid var(--border);color:var(--text);padding:9px 10px;border-radius:10px;font-size:14px;font-weight:600;}
+.field input:focus{outline:none;border-color:var(--accent);}
+.content{flex:1;padding:30px 34px;overflow-y:auto;height:100vh;}
+.tab-panel{display:none;animation:fade .25s ease;}
+.tab-panel.active{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
+.page-head h2{margin:0;font-size:22px;font-weight:800;}
+.page-head p{margin:4px 0 0;color:var(--text-dim);font-size:13px;}
+.btn{background:linear-gradient(90deg,var(--accent),var(--accent2));border:none;color:#0a0e18;font-weight:700;padding:10px 16px;border-radius:10px;cursor:pointer;font-size:13px;}
+.btn.secondary{background:var(--panel);color:var(--text);border:1px solid var(--border);}
+.btn.small{padding:7px 12px;font-size:12px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:24px;}
+.kpi{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);overflow:hidden;}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--bar-color,var(--accent));}
+.kpi .label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;font-weight:600;}
+.kpi .value{font-size:20px;font-weight:800;margin-top:8px;}
+.kpi .sub{font-size:12px;color:var(--text-dim);margin-top:4px;}
+.grid-2{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;margin-bottom:24px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);}
+.panel h3{margin:0 0 14px;font-size:14px;font-weight:700;color:var(--text);}
+.panel h3 span{color:var(--text-dim);font-weight:500;font-size:12px;}
+.chart-wrap{position:relative;height:300px;}
+.chart-wrap.tall{height:340px;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;color:var(--text-dim);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:10px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--panel);}
+td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04);font-size:13.5px;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.right{text-align:right;}
+.center{text-align:center;}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(129,140,248,.15);color:var(--accent2);border:1px solid rgba(129,140,248,.3);white-space:nowrap;}
+.badge.q1{background:rgba(94,234,212,.15);color:var(--accent);border-color:rgba(94,234,212,.3);}
+.badge.q2{background:rgba(129,140,248,.15);color:var(--accent2);border-color:rgba(129,140,248,.3);}
+.badge.q3{background:rgba(244,114,182,.15);color:var(--accent3);border-color:rgba(244,114,182,.3);}
+.badge.q4{background:rgba(251,191,36,.15);color:var(--accent4);border-color:rgba(251,191,36,.3);}
+.badge.good{background:rgba(94,234,212,.15);color:var(--accent);border-color:rgba(94,234,212,.3);}
+.badge.bad{background:rgba(244,114,182,.15);color:var(--accent3);border-color:rgba(244,114,182,.3);}
+.qtabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.qtabs button{border:1px solid var(--border);background:var(--panel);color:var(--text-dim);padding:9px 18px;border-radius:30px;font-weight:700;font-size:13px;cursor:pointer;transition:.15s;}
+.qtabs button.active{color:#0a0e18;border-color:transparent;background:var(--accent);}
+.seg-toggle{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.seg-toggle button{border:1px solid var(--border);background:var(--panel);color:var(--text-dim);padding:9px 18px;border-radius:30px;font-weight:700;font-size:13px;cursor:pointer;transition:.15s;}
+.seg-toggle button.active{background:var(--accent);color:#0a0e18;border-color:transparent;}
+.table-scroll{max-height:460px;overflow-y:auto;border-radius:12px;border:1px solid var(--border);}
+.month-sub td{background:var(--panel-2);font-weight:700;color:var(--accent);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;}
+.total-row td{background:rgba(94,234,212,.1);font-weight:800;color:var(--text);border-top:2px solid var(--accent);}
+.chart-scroll{overflow-x:auto;}
+.cal-select{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.cal-select select{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:10px;font-weight:700;font-size:14px;}
+.weights-note{font-size:12.5px;color:var(--text-dim);margin-bottom:16px;line-height:1.5;}
+.w-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px;}
+.w-table{min-width:1400px;}
+.w-table th{white-space:nowrap;}
+.w-table th.group-wf{background:rgba(129,140,248,.1);}
+.w-table th.group-wd{background:rgba(244,114,182,.08);}
+.w-table td input{width:56px;text-align:center;background:var(--bg-alt);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:5px 4px;font-size:12.5px;font-weight:600;}
+.w-table td input:focus{outline:none;border-color:var(--accent);}
+.w-table td.month-name{font-weight:700;white-space:nowrap;}
+.actions-row{display:flex;justify-content:flex-end;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.slider-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:20px;}
+.slider-row{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+.slider-row:last-child{margin-bottom:0;}
+.slider-row .top{display:flex;justify-content:space-between;align-items:baseline;}
+.slider-row .top .name{font-size:13.5px;font-weight:700;}
+.slider-row .top .val{font-size:13px;font-weight:800;color:var(--accent);}
+.slider-row input[type="range"]{-webkit-appearance:none;width:100%;height:6px;border-radius:4px;background:var(--bg-alt);outline:none;border:1px solid var(--border);}
+.slider-row input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));cursor:pointer;border:2px solid #0a0e18;}
+.slider-row .hint{font-size:11.5px;color:var(--text-dim);}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--border);}
+.toggle-row .name{font-size:13.5px;font-weight:700;}
+.toggle-row .hint{font-size:11.5px;color:var(--text-dim);margin-top:2px;}
+.switch{position:relative;width:46px;height:26px;flex-shrink:0;}
+.switch input{opacity:0;width:0;height:0;}
+.switch .slider-el{position:absolute;cursor:pointer;inset:0;background:var(--bg-alt);border:1px solid var(--border);border-radius:30px;transition:.2s;}
+.switch .slider-el::before{content:'';position:absolute;height:18px;width:18px;left:3px;top:3px;background:var(--text-dim);border-radius:50%;transition:.2s;}
+.switch input:checked + .slider-el{background:rgba(94,234,212,.25);border-color:var(--accent);}
+.switch input:checked + .slider-el::before{transform:translateX(20px);background:var(--accent);}
+.select-inline{background:var(--bg-alt);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:8px;font-weight:700;font-size:13px;}
+.warn-box{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);color:var(--accent4);border-radius:10px;padding:10px 14px;font-size:12.5px;margin-top:10px;}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-thumb{background:var(--panel-2);border-radius:10px;}
+::-webkit-scrollbar-track{background:transparent;}
+@media (max-width:1000px){
+  .app{flex-direction:column;}
+  .sidebar{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap;}
+  .grid-2, .grid-3{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>Budget Phasing Studio</h1>
+      <span>v13 · Flat vs Historical Actual baseline</span>
+    </div>
+
+    <div class="budget-hero">
+      <div class="hero-label"><span class="ic">💰</span>Annual Budget — Primary Input</div>
+      <input type="number" id="inputBudget" value="140" min="0" step="0.01">
+      <div class="hero-suffix"><span>in ₹ Crores</span><span class="hero-total" id="totalChip">= ₹140.00 Cr</span></div>
+    </div>
+
+    <div class="controls">
+      <h3>Calendar Year</h3>
+      <div class="field"><input type="number" id="inputYear" value="2026" min="2000" max="2100" step="1"></div>
+    </div>
+
+    <nav class="nav" id="nav">
+      <div class="section-label">Main</div>
+      <button data-tab="dashboard" class="active primary"><span class="dot"></span>Dashboard</button>
+      <button data-tab="quarterly" class="primary"><span class="dot"></span>Quarterly Split</button>
+      <button data-tab="calendar" class="primary"><span class="dot"></span>Daily Calendar</button>
+
+      <button class="nav-toggle open" id="moreToggle" type="button"><span class="dot"></span>Insights & Settings<span class="chevron">▾</span></button>
+      <div class="nav-sub open" id="moreSub">
+        <button data-tab="scoreeng">Composite Score Engine</button>
+        <button data-tab="flatvs">Flat vs Smoothed</button>
+        <button data-tab="smoothing">Smoothing Engine</button>
+        <button data-tab="weights">Weights Editor</button>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+    <!-- DASHBOARD -->
+    <section class="tab-panel active" id="panel-dashboard">
+      <div class="page-head">
+        <div><h2>Annual Overview</h2><p id="dashSub">Full-year phasing based on Monthly, Weekforced & Weekday scores (smoothed)</p></div>
+        <button class="btn" id="exportYearBtn">⬇ Export Full Year CSV</button>
+      </div>
+      <div class="kpi-grid" id="dashKpis"></div>
+      <div class="grid-2">
+        <div class="panel"><h3>Monthly Budget Distribution <span>(₹ Cr, colored by quarter)</span></h3><div class="chart-wrap"><canvas id="chartMonthly"></canvas></div></div>
+        <div class="panel"><h3>Quarterly Split</h3><div class="chart-wrap"><canvas id="chartQuarter"></canvas></div></div>
+      </div>
+      <div class="panel" style="margin-bottom:24px;">
+        <h3>Monthly Breakdown</h3>
+        <div class="table-scroll"><table><thead><tr><th>Month</th><th>Quarter</th><th class="right">Monthly Score</th><th class="right">Share %</th><th class="right">Amount</th></tr></thead><tbody id="monthlyTableBody"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- QUARTERLY -->
+    <section class="tab-panel" id="panel-quarterly">
+      <div class="page-head">
+        <div><h2>Quarterly Drilldown</h2><p>Pick a quarter to see its day-wise chart and week-wise budget summary</p></div>
+        <button class="btn" id="exportQuarterBtn">⬇ Export Week-wise CSV</button>
+      </div>
+      <div class="qtabs" id="qtabs">
+        <button data-q="0" class="active">Q1 · Jan–Mar</button><button data-q="1">Q2 · Apr–Jun</button><button data-q="2">Q3 · Jul–Sep</button><button data-q="3">Q4 · Oct–Dec</button>
+      </div>
+      <div class="kpi-grid" id="qKpis"></div>
+      <div class="panel" style="margin-bottom:24px;"><h3>Day-wise Budget <span id="qChartLabel"></span></h3><div class="chart-scroll"><div class="chart-wrap tall" id="qChartHost"><canvas id="chartQuarterDay"></canvas></div></div></div>
+      <div class="panel">
+        <h3>Week-wise Summary <span>(W0: 1–7, W1: 8–14, W2: 15–21, W3: 22–28, W3-ext: 29–31)</span></h3>
+        <div class="table-scroll"><table><thead><tr><th>Week Tag / Bucket</th><th>Date Range</th><th class="center">Days</th><th class="right">Share of Month</th><th class="right">Amount</th><th class="right">Avg. Spend / Day</th></tr></thead><tbody id="quarterTableBody"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- CALENDAR -->
+    <section class="tab-panel" id="panel-calendar">
+      <div class="page-head"><div><h2>Daily Calendar</h2><p>Day-wise budget detail for the selected month</p></div></div>
+      <div class="cal-select"><select id="calMonthSelect"></select></div>
+      <div class="kpi-grid" id="calKpis"></div>
+      <div class="panel">
+        <h3>Daily Detail (by month)</h3>
+        <div class="table-scroll"><table><thead><tr><th>Date</th><th>Weekday</th><th>Week Tag / Bucket</th><th class="right">Amount</th></tr></thead><tbody id="calTableBody"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- SCORE ENGINEERING -->
+    <section class="tab-panel" id="panel-scoreeng">
+      <div class="page-head">
+        <div><h2>Composite Score Engine</h2><p>Built directly from your "Month x Week(forced) Pivot" and "Month x Weekday Pivot" sheets — adjust weights and see scores recompute live</p></div>
+      </div>
+
+      <div class="weights-note">
+        <b>Formula:</b> Composite Score = w<sub>Eff</sub>×Efficiency_norm + w<sub>CAC</sub>×(1−CAC_norm) + w<sub>Ren</sub>×Renewal_norm + w<sub>Act</sub>×Activation_norm.
+        Renewal = mean(W1, W2, W3 Renewals). Each metric is min–max normalized <b>across the 5 week-buckets (or 7 weekdays) within its quarter</b>, CAC is inverted since lower cost is better.
+        Default weights (40/20/30/10) reproduce your documented Table 1/Table 2 scores almost exactly — see the Validation panel below.
+        <br><br><b>Suggested scores sum to exactly 100</b> for the 5 Week (forced) buckets, and separately sum to exactly 100 for the 7 Weekdays, while keeping adjacent-step differences capped at ≤10.
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Composite Score Weights <span>(auto-normalized to 100%)</span></h3>
+          <div class="slider-row">
+            <div class="top"><span class="name">Efficiency</span><span class="val" id="wEffVal">40%</span></div>
+            <input type="range" id="wEffSlider" min="0" max="100" value="40">
+          </div>
+          <div class="slider-row">
+            <div class="top"><span class="name">CAC (inverted — lower cost = better)</span><span class="val" id="wCacVal">20%</span></div>
+            <input type="range" id="wCacSlider" min="0" max="100" value="20">
+          </div>
+          <div class="slider-row">
+            <div class="top"><span class="name">Renewal</span><span class="val" id="wRenVal">30%</span></div>
+            <input type="range" id="wRenSlider" min="0" max="100" value="30">
+          </div>
+          <div class="slider-row" style="margin-bottom:0;">
+            <div class="top"><span class="name">Activation</span><span class="val" id="wActVal">10%</span></div>
+            <input type="range" id="wActSlider" min="0" max="100" value="10">
+          </div>
+          <div class="actions-row" style="margin-top:16px;margin-bottom:0;">
+            <button class="btn secondary small" id="resetWeightsScoreBtn">↺ Reset to Documented Defaults (40/20/30/10)</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Validation vs Documented Scores <span>(current weights vs Table 1/2)</span></h3>
+          <div id="seValidation" style="font-size:12.5px;line-height:1.7;"></div>
+        </div>
+      </div>
+
+      <div class="cal-select">
+        <select id="seQuarterSelect">
+          <option value="AMJ-25">AMJ-25</option>
+          <option value="AMJ-26">AMJ-26</option>
+          <option value="JAS-25">JAS-25</option>
+          <option value="JFM-25">JFM-25</option>
+          <option value="JFM-26">JFM-26</option>
+          <option value="OND-25">OND-25</option>
+        </select>
+      </div>
+
+      <div class="grid-3">
+        <div class="panel">
+          <h3>🏆 Best / Worst Weeks</h3>
+          <div id="seWeekBW"></div>
+        </div>
+        <div class="panel">
+          <h3>🏆 Best / Worst Weekdays</h3>
+          <div id="seDayBW"></div>
+        </div>
+        <div class="panel">
+          <h3>Source</h3>
+          <div class="sub">Data from your "Month x Week(forced) Pivot" & "Month x Weekday Pivot" sheets.</div>
+          <div class="sub" style="margin-top:8px;">Dec 30, 2025 already excluded upstream in these pivot averages.</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Recomputed Week (forced) Composite Scores</h3>
+          <div class="table-scroll"><table><thead><tr><th>Week</th><th class="right">Composite Score</th></tr></thead><tbody id="seWeekTableBody"></tbody></table></div>
+        </div>
+        <div class="panel">
+          <h3>Recomputed Weekday Composite Scores</h3>
+          <div class="table-scroll"><table><thead><tr><th>Weekday</th><th class="right">Composite Score</th></tr></thead><tbody id="seDayTableBody"></tbody></table></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Suggested Weights Editor Scores <span>(sum = 100 per set, adjacent difference capped at ≤10)</span></h3>
+        <div class="weights-note">Weekforced sequence (W0→W1→W2→W3→W3-ext) is smoothed linearly. Weekday sequence is smoothed as a repeating weekly cycle (Sun→...→Sat→Sun wrap). Both sets are rescaled to sum to exactly 100.</div>
+        <div class="grid-2">
+          <div>
+            <table><thead><tr><th>Week</th><th class="right">Suggested Score</th></tr></thead><tbody id="seWeekSuggestBody"></tbody><tfoot id="seWeekSuggestFoot"></tfoot></table>
+          </div>
+          <div>
+            <table><thead><tr><th>Weekday</th><th class="right">Suggested Score</th></tr></thead><tbody id="seDaySuggestBody"></tbody><tfoot id="seDaySuggestFoot"></tfoot></table>
+          </div>
+        </div>
+        <div class="actions-row" style="margin-top:16px;margin-bottom:0;">
+          <button class="btn" id="applyToWeightsBtn">✅ Apply These Scores to Weights Editor</button>
+        </div>
+        <div id="applyConfirm"></div>
+      </div>
+    </section>
+
+    <!-- FLAT VS SMOOTHED -->
+    <section class="tab-panel" id="panel-flatvs">
+      <div class="page-head">
+        <div><h2>Flat / Historical vs Smoothed Model</h2><p>How efficiently the smoothed model deploys the same real budget vs a Flat or Historical Actual spend baseline</p></div>
+        <button class="btn" id="exportFvsBtn">⬇ Export Comparison CSV</button>
+      </div>
+
+      <div class="seg-toggle" id="fvsBaselineToggle">
+        <button data-baseline="flat" class="active">📏 Flat Spend</button>
+        <button data-baseline="historical">📊 Historical Actual Spend</button>
+      </div>
+
+      <div class="weights-note">
+        <b>Budget in Scope</b> is the one real ₹ number here. Each day carries an <b>Efficiency Index</b> (its original composite-score-derived weight, normalized to mean = 1 per month).
+        <b>Efficiency Multiplier = Σ(spend × Efficiency Index) ÷ Budget in Scope</b>.
+        <br><br><b>Flat Spend</b> baseline is always exactly 1.00x by construction (equal spend every day).
+        <b>Historical Actual Spend</b> baseline reconstructs how spend was actually distributed historically — using the real average spend per week-bucket and weekday from your pivot sheets — rescaled to fit this budget. Unlike Flat, its multiplier is <i>not</i> fixed at 1.00x, so it directly shows whether your past actual spend pattern already leaned toward efficient days, or whether the new Smoothed model genuinely improves on how budget was really being spent.
+      </div>
+
+      <div class="cal-select"><select id="fvsScopeSelect"><option value="all">Full Year — all 12 months</option></select></div>
+      <div class="kpi-grid" id="fvsKpis"></div>
+      <div class="panel" style="margin-bottom:24px;"><h3 id="fvsChartTitle">Efficiency Multiplier by Month</h3><div class="chart-wrap tall"><canvas id="chartFvs"></canvas></div></div>
+      <div class="panel">
+        <h3>Month-by-Month Comparison <span>(anchored to Budget in Scope)</span></h3>
+        <div class="table-scroll"><table><thead><tr><th>Month</th><th class="right">Budget in Scope</th><th class="right" id="fvsBaselineTh">Flat Multiplier</th><th class="right">Smoothed Multiplier</th><th class="right">Efficiency Gain</th></tr></thead><tbody id="fvsTableBody"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- SMOOTHING ENGINE -->
+    <section class="tab-panel" id="panel-smoothing">
+      <div class="page-head"><div><h2>Smoothing Engine</h2><p>Control how sharply daily spend can swing between the Weekforced and Weekday scores</p></div></div>
+      <div class="slider-card">
+        <div class="slider-row">
+          <div class="top"><span class="name">Weekforced Weight (α)</span><span class="val" id="alphaVal">50% Weekforced / 50% Weekday</span></div>
+          <input type="range" id="alphaSlider" min="0" max="100" value="50">
+          <div class="hint">Additive blend: combined = α × Weekforced_norm + (1−α) × Weekday_norm.</div>
+        </div>
+        <div class="slider-row">
+          <div class="top"><span class="name">Smoothing Factor (λ)</span><span class="val" id="lambdaVal">55%</span></div>
+          <input type="range" id="lambdaSlider" min="0" max="100" value="55">
+          <div class="hint">λ=100% is the full scored model. λ=0% is perfectly flat daily spend.</div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="name">Rolling-Average Safety Net</div><div class="hint">Centered moving average, re-normalized so the month's total is unchanged.</div></div>
+          <label class="switch"><input type="checkbox" id="rollingToggle" checked><span class="slider-el"></span></label>
+        </div>
+        <div class="toggle-row" style="border-top:none;padding-top:0;">
+          <div class="name">Rolling Window</div>
+          <select class="select-inline" id="rollingWindowSelect"><option value="3">3-day</option><option value="5">5-day</option><option value="7">7-day</option></select>
+        </div>
+        <div class="actions-row" style="margin-top:16px;margin-bottom:0;"><button class="btn secondary" id="resetSmoothingBtn">↺ Reset to Suggested Defaults</button></div>
+      </div>
+      <div class="cal-select"><select id="smoothMonthSelect"></select></div>
+      <div class="kpi-grid" id="smoothKpis"></div>
+      <div class="panel"><h3>Legacy Model vs New Smoothed Model <span id="smoothChartLabel"></span></h3><div class="chart-wrap tall"><canvas id="chartSmoothCompare"></canvas></div></div>
+    </section>
+
+    <!-- WEIGHTS -->
+    <section class="tab-panel" id="panel-weights">
+      <div class="page-head"><div><h2>Weights Editor</h2><p>Edit Monthly, Weekforced (W0–W3ext) and Weekday scores — updates everywhere instantly</p></div></div>
+      <div class="weights-note">These are relative scores. Each month, the 5 Weekforced and 7 Weekday scores are normalized to mean = 1, then combined additively using the α/λ controls on the Smoothing Engine tab — W0=1st–7th, W1=8th–14th, W2=15th–21st, W3=22nd–28th, W3-ext=29th–31st.</div>
+      <div class="actions-row"><button class="btn secondary" id="resetWeightsBtn">↺ Reset to Defaults</button></div>
+      <div class="w-table-wrap">
+        <table class="w-table">
+          <thead>
+            <tr><th rowspan="2">Calendar Month</th><th rowspan="2">Monthly Score</th><th class="group-wf" colspan="5">Weekforced Score</th><th class="group-wd" colspan="7">Weekday Score</th></tr>
+            <tr><th class="group-wf">W0 (1–7)</th><th class="group-wf">W1 (8–14)</th><th class="group-wf">W2 (15–21)</th><th class="group-wf">W3 (22–28)</th><th class="group-wf">W3-ext (29–31)</th><th class="group-wd">Sun</th><th class="group-wd">Mon</th><th class="group-wd">Tue</th><th class="group-wd">Wed</th><th class="group-wd">Thu</th><th class="group-wd">Fri</th><th class="group-wd">Sat</th></tr>
+          </thead>
+          <tbody id="weightsBody"></tbody>
+          <tfoot id="weightsFoot"></tfoot>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* ------------------- DEFAULT WEIGHTS ------------------- */
+const DEFAULT_WEIGHTS = { months: [
+  {name:'January',  monthly:40, w0:25,w1:40,w2:15,w3:10,w3ext:10, sun:10,mon:10,tue:15,wed:20,thu:20,fri:15,sat:10},
+  {name:'February', monthly:40, w0:25,w1:40,w2:15,w3:10,w3ext:10, sun:10,mon:10,tue:15,wed:20,thu:20,fri:15,sat:10},
+  {name:'March',    monthly:40, w0:25,w1:40,w2:15,w3:10,w3ext:10, sun:10,mon:10,tue:15,wed:20,thu:20,fri:15,sat:10},
+  {name:'April',    monthly:20, w0:25,w1:40,w2:15,w3:10,w3ext:10, sun:5, mon:10,tue:15,wed:25,thu:25,fri:15,sat:5},
+  {name:'May',      monthly:20, w0:25,w1:40,w2:15,w3:10,w3ext:10, sun:5, mon:10,tue:15,wed:25,thu:25,fri:15,sat:5},
+  {name:'June',     monthly:20, w0:25,w1:40,w2:15,w3:10,w3ext:10, sun:5, mon:10,tue:15,wed:25,thu:25,fri:15,sat:5},
+  {name:'July',     monthly:30, w0:25,w1:40,w2:15,w3:10,w3ext:10, sun:25,mon:15,tue:15,wed:10,thu:5, fri:10,sat:20},
+  {name:'August',   monthly:30, w0:25,w1:40,w2:15,w3:10,w3ext:10, sun:25,mon:15,tue:15,wed:10,thu:5, fri:10,sat:20},
+  {name:'September',monthly:30, w0:25,w1:40,w2:15,w3:10,w3ext:10, sun:25,mon:15,tue:15,wed:10,thu:5, fri:10,sat:20},
+  {name:'October',  monthly:30, w0:25,w1:40,w2:15,w3:10,w3ext:10, sun:25,mon:20,tue:15,wed:5, thu:10,fri:10,sat:15},
+  {name:'November', monthly:30, w0:25,w1:40,w2:15,w3:10,w3ext:10, sun:25,mon:20,tue:15,wed:5, thu:10,fri:10,sat:15},
+  {name:'December', monthly:30, w0:25,w1:40,w2:15,w3:10,w3ext:10, sun:25,mon:20,tue:15,wed:5, thu:10,fri:10,sat:15},
+]};
+const WEIGHT_KEYS = ['monthly','w0','w1','w2','w3','w3ext','sun','mon','tue','wed','thu','fri','sat'];
+const bucketKeyMap = {W0:'w0',W1:'w1',W2:'w2',W3:'w3','W3-ext':'w3ext'};
+const dowKeyMap = ['sun','mon','tue','wed','thu','fri','sat'];
+const dowNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const QUARTER_COLORS = ['#5eead4','#818cf8','#f472b6','#fbbf24'];
+const WEEK_ORDER = ['W0','W1','W2','W3','W3-ext'];
+const DEFAULT_SMOOTHING = { alpha: 0.5, lambda: 0.55, rollingEnabled: true, rollingWindow: 3 };
+const QUARTER_MONTH_MAP = { 'AMJ':[3,4,5], 'JAS':[6,7,8], 'OND':[9,10,11], 'JFM':[0,1,2] };
+const MONTH_QUARTER_PREFIX = ['JFM','JFM','JFM','AMJ','AMJ','AMJ','JAS','JAS','JAS','OND','OND','OND'];
+
+const BUCKET_RANGES = { 'W0':'1–7', 'W1':'8–14', 'W2':'15–21', 'W3':'22–28', 'W3-ext':'29–31' };
+function getWeekBucketForDay(day){ if(day<=7) return 'W0'; if(day<=14) return 'W1'; if(day<=21) return 'W2'; if(day<=28) return 'W3'; return 'W3-ext'; }
+function bucketLabel(b){ return `${b} (${BUCKET_RANGES[b]})`; }
+
+function summarizeByWeek(monthDays){
+  const monthName = monthDays[0].monthName; const groups={};
+  monthDays.forEach(d=>{ if(!groups[d.bucket]) groups[d.bucket]=[]; groups[d.bucket].push(d); });
+  const result=[];
+  WEEK_ORDER.forEach(b=>{ const rows=groups[b]; if(rows&&rows.length){ const amount=rows.reduce((s,d)=>s+d.amount,0); const f=rows[0].day,l=rows[rows.length-1].day;
+    const dateRange = f===l? `${f} ${monthName.slice(0,3)}` : `${f}–${l} ${monthName.slice(0,3)}`;
+    result.push({bucket:b, dateRange, count:rows.length, amount}); } });
+  return result;
+}
+function normalizeMean(valuesObj){
+  const vals=Object.values(valuesObj).map(v=>Number(v)||0); const mean=vals.reduce((a,b)=>a+b,0)/(vals.length||1); const out={};
+  Object.keys(valuesObj).forEach(k=>{ out[k]= mean>0 ? (Number(valuesObj[k])||0)/mean : 1; }); return out;
+}
+function rollingAverage(arr,window){ if(window<=1) return arr.slice(); const half=Math.floor(window/2);
+  return arr.map((_,i)=>{ let sum=0,count=0; for(let j=i-half;j<=i+half;j++){ if(j>=0&&j<arr.length){sum+=arr[j];count++;} } return sum/count; }); }
+function maxDayOverDaySwing(arr){ let m=0; for(let i=1;i<arr.length;i++){ if(arr[i-1]>0){ const p=Math.abs(arr[i]-arr[i-1])/arr[i-1]*100; if(p>m)m=p; } } return m; }
+
+let state = {
+  budget:140, year:2026,
+  weights: JSON.parse(JSON.stringify(DEFAULT_WEIGHTS)),
+  smoothing: JSON.parse(JSON.stringify(DEFAULT_SMOOTHING)),
+  currentQuarter:0, currentMonth:0, smoothMonth:7, fvsScope:'all', fvsBaseline:'flat'
+};
+
+try{ const savedW=localStorage.getItem('bps_weights_v1'); if(savedW) state.weights=JSON.parse(savedW);
+  const savedS=localStorage.getItem('bps_smoothing_v1'); if(savedS) state.smoothing=JSON.parse(savedS); }catch(e){}
+
+function saveWeights(){ try{ localStorage.setItem('bps_weights_v1', JSON.stringify(state.weights)); }catch(e){} }
+function saveSmoothing(){ try{ localStorage.setItem('bps_smoothing_v1', JSON.stringify(state.smoothing)); }catch(e){} }
+
+function fmtCr(n){ return '₹'+(n/1e7).toLocaleString('en-IN',{maximumFractionDigits:2,minimumFractionDigits:2})+' Cr'; }
+function fmtLakh(n){ return '₹'+(n/1e5).toLocaleString('en-IN',{maximumFractionDigits:2,minimumFractionDigits:2})+' L'; }
+function fmtRupee(n){ return '₹'+Math.round(n).toLocaleString('en-IN'); }
+function fmtAuto(n){ const a=Math.abs(n); if(a>=1e7) return fmtCr(n); if(a>=1e5) return fmtLakh(n); return fmtRupee(n); }
+function fmtX(n){ return n.toFixed(2)+'x'; }
+
+/* ------------------- HISTORICAL ACTUAL SPEND (from pivot sheets) ------------------- */
+/* Average of Spends per week-bucket per quarter, from "Month x Week(forced) Pivot" */
+const SPEND_WEEK_RAW = {
+  'AMJ-25':{W0:618359,W1:705427,W2:705518,W3:636484,'W3-ext':656157},
+  'AMJ-26':{W0:2012265,W1:1949938,W2:1862446,W3:1692719,'W3-ext':1811096},
+  'JAS-25':{W0:711163,W1:701638,W2:759704,W3:654314,'W3-ext':706443},
+  'JFM-25':{W0:452906,W1:443104,W2:333720,W3:261408,'W3-ext':326111},
+  'JFM-26':{W0:1967098,W1:2167279,W2:2136501,W3:1976123,'W3-ext':2067798},
+  'OND-25':{W0:1182617,W1:1462514,W2:1632212,W3:1557303,'W3-ext':1437825}
+};
+/* Average of Spends per weekday (1=Sun..7=Sat) per quarter, from "Month x Weekday Pivot" */
+const SPEND_WEEKDAY_RAW = {
+  'AMJ-25':{1:683793,2:680014,3:649698,4:644212,5:663790,6:686551,7:651531},
+  'AMJ-26':{1:1851119,2:1807516,3:1861970,4:1854385,5:1971738,6:1870974,7:1904858},
+  'JAS-25':{1:715395,2:723978,3:727270,4:725051,5:758839,6:663468,7:631189},
+  'JFM-25':{1:366863,2:383512,3:362237,4:351981,5:376485,6:365915,7:367589},
+  'JFM-26':{1:2154087,2:2059007,3:2030558,4:2022241,5:2025293,6:2046259,7:2094558},
+  'OND-25':{1:1539890,2:1448294,3:1459214,4:1416672,5:1420049,6:1430987,7:1487576}
+};
+/* Average across available year-suffixes per generic quarter prefix (AMJ/JAS/OND/JFM) */
+function averageByPrefix(rawByQuarter, keys){
+  const prefixes = {'AMJ':[],'JAS':[],'OND':[],'JFM':[]};
+  Object.keys(rawByQuarter).forEach(q=>{ const p=q.split('-')[0]; if(prefixes[p]) prefixes[p].push(rawByQuarter[q]); });
+  const out = {};
+  Object.keys(prefixes).forEach(p=>{
+    const rows = prefixes[p];
+    if(!rows.length) return;
+    const avg = {};
+    keys.forEach(k=>{ avg[k] = rows.reduce((s,r)=>s+r[k],0)/rows.length; });
+    out[p] = avg;
+  });
+  return out;
+}
+const HISTORICAL_SPEND_WEEK = averageByPrefix(SPEND_WEEK_RAW, WEEK_ORDER);
+const HISTORICAL_SPEND_WEEKDAY = averageByPrefix(SPEND_WEEKDAY_RAW, [1,2,3,4,5,6,7]);
+
+/* ------------------- BUDGET ENGINE ------------------- */
+function computeAll(){
+  const totalRupees = Number(state.budget||0)*1e7;
+  const months = state.weights.months;
+  const sumMonthly = months.reduce((s,m)=>s+(Number(m.monthly)||0),0)||1;
+  const {alpha,lambda,rollingEnabled,rollingWindow} = state.smoothing;
+  const beta = 1-alpha;
+  const monthsData=[], dailyData=[];
+
+  months.forEach((m,idx)=>{
+    const monthBudget = totalRupees*((Number(m.monthly)||0)/sumMonthly);
+    const daysInMonth = new Date(state.year, idx+1, 0).getDate();
+    const flatPerDay = monthBudget/daysInMonth;
+
+    const wfRaw={W0:m.w0,W1:m.w1,W2:m.w2,W3:m.w3,'W3-ext':m.w3ext};
+    const wdRaw={0:m.sun,1:m.mon,2:m.tue,3:m.wed,4:m.thu,5:m.fri,6:m.sat};
+    const wfNorm=normalizeMean(wfRaw), wdNorm=normalizeMean(wdRaw);
+
+    const quarterPrefix = MONTH_QUARTER_PREFIX[idx];
+    const spendWeekObj = HISTORICAL_SPEND_WEEK[quarterPrefix];
+    const spendDayObj = HISTORICAL_SPEND_WEEKDAY[quarterPrefix];
+    const spendWeekNorm = spendWeekObj ? normalizeMean(spendWeekObj) : null;
+    const spendDayNorm = spendDayObj ? normalizeMean(spendDayObj) : null;
+
+    const rows=[], newW=[], legW=[], histW=[];
+    for(let day=1; day<=daysInMonth; day++){
+      const dateObj=new Date(state.year,idx,day); const dow=dateObj.getDay(); const bucketName=getWeekBucketForDay(day);
+      const combined=alpha*wfNorm[bucketName]+beta*wdNorm[dow];
+      newW.push(lambda*combined+(1-lambda)*1);
+      legW.push((Number(m[bucketKeyMap[bucketName]])||0)*(Number(m[dowKeyMap[dow]])||0));
+
+      // Historical Actual spend pattern weight: week-bucket avg spend x weekday avg spend (both quarter-normalized)
+      const pivotDayKey = dow+1; // dow 0(Sun)->1 ... 6(Sat)->7, matches validated pivot weekday indexing
+      const histRaw = (spendWeekNorm ? spendWeekNorm[bucketName] : 1) * (spendDayNorm ? spendDayNorm[pivotDayKey] : 1);
+      histW.push(histRaw);
+
+      rows.push({day,dow,bucketName,date:dateObj});
+    }
+    const finalW = rollingEnabled? rollingAverage(newW,rollingWindow) : newW;
+    const sumFinal=finalW.reduce((a,b)=>a+b,0)||1, sumLeg=legW.reduce((a,b)=>a+b,0)||1, sumHist=histW.reduce((a,b)=>a+b,0)||1;
+    const legMean=legW.reduce((a,b)=>a+b,0)/(legW.length||1)||1;
+    const effIndexArr=legW.map(v=> legMean>0? v/legMean : 1);
+    rows.forEach((r,i)=>{
+      const amount=(finalW[i]/sumFinal)*monthBudget;
+      const legacyAmount=(legW[i]/sumLeg)*monthBudget;
+      const histAmount=(histW[i]/sumHist)*monthBudget;
+      dailyData.push({monthIdx:idx,monthName:m.name,day:r.day,dow:r.dow,bucket:r.bucketName,amount,legacyAmount,flatAmount:flatPerDay,histAmount,effIndex:effIndexArr[i],date:r.date});
+    });
+    monthsData.push({idx,name:m.name,score:Number(m.monthly)||0,share:(Number(m.monthly)||0)/sumMonthly,amount:monthBudget});
+  });
+  const quarters=[0,0,0,0]; monthsData.forEach((m,idx)=>{ quarters[Math.floor(idx/3)]+=m.amount; });
+  return {monthsData,dailyData,quarters,totalRupees};
+}
+function weightedOutput(days, field){ return days.reduce((s,d)=> s+d[field]*d.effIndex, 0); }
+function getBaselineField(){ return state.fvsBaseline === 'historical' ? 'histAmount' : 'flatAmount'; }
+function getBaselineLabel(){ return state.fvsBaseline === 'historical' ? 'Historical Actual' : 'Flat'; }
+
+let chartMonthly, chartQuarter, chartQuarterDay, chartSmoothCompare, chartFvs;
+function destroyChart(c){ if(c) c.destroy(); }
+
+function renderDashboard(data){
+  document.getElementById('dashSub').textContent = `Full-year phasing for ${state.year} across 12 months (smoothed model)`;
+  const kpis=[
+    {label:'Annual Budget', value:fmtCr(data.totalRupees), sub:`FY ${state.year}`, color:'var(--accent)'},
+    {label:'Q1 · Jan–Mar', value:fmtCr(data.quarters[0]), sub:'', color:QUARTER_COLORS[0]},
+    {label:'Q2 · Apr–Jun', value:fmtCr(data.quarters[1]), sub:'', color:QUARTER_COLORS[1]},
+    {label:'Q3 · Jul–Sep', value:fmtCr(data.quarters[2]), sub:'', color:QUARTER_COLORS[2]},
+    {label:'Q4 · Oct–Dec', value:fmtCr(data.quarters[3]), sub:'', color:QUARTER_COLORS[3]},
+  ];
+  document.getElementById('dashKpis').innerHTML = kpis.map(k=>`<div class="kpi" style="--bar-color:${k.color}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="sub">${k.sub}</div></div>`).join('');
+
+  const ctx1=document.getElementById('chartMonthly').getContext('2d'); destroyChart(chartMonthly);
+  chartMonthly=new Chart(ctx1,{type:'bar',data:{labels:data.monthsData.map(m=>m.name.slice(0,3)),datasets:[{data:data.monthsData.map(m=>+(m.amount/1e7).toFixed(3)),backgroundColor:data.monthsData.map((m,i)=>QUARTER_COLORS[Math.floor(i/3)]),borderRadius:8,maxBarThickness:42}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' ₹'+c.raw+' Cr'}}},scales:{x:{grid:{display:false},ticks:{color:'#8a93ac'}},y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8a93ac',callback:v=>'₹'+v+'Cr'}}}}});
+
+  const ctx2=document.getElementById('chartQuarter').getContext('2d'); destroyChart(chartQuarter);
+  chartQuarter=new Chart(ctx2,{type:'doughnut',data:{labels:['Q1 Jan–Mar','Q2 Apr–Jun','Q3 Jul–Sep','Q4 Oct–Dec'],datasets:[{data:data.quarters.map(q=>+(q/1e7).toFixed(3)),backgroundColor:QUARTER_COLORS,borderWidth:0,hoverOffset:8}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#e8ebf5',boxWidth:10,padding:14,font:{size:11}}},tooltip:{callbacks:{label:c=>` ${c.label}: ₹${c.raw} Cr`}}}}});
+
+  let rows=data.monthsData.map((m,i)=>{ const q=Math.floor(i/3)+1;
+    return `<tr><td>${m.name}</td><td><span class="badge q${q}">Q${q}</span></td><td class="right">${m.score}</td><td class="right">${(m.share*100).toFixed(2)}%</td><td class="right">${fmtAuto(m.amount)}</td></tr>`; }).join('');
+  const st=data.monthsData.reduce((s,m)=>s+m.score,0), at=data.monthsData.reduce((s,m)=>s+m.amount,0);
+  rows+=`<tr class="total-row"><td>Total</td><td></td><td class="right">${st}</td><td class="right">100.00%</td><td class="right">${fmtAuto(at)}</td></tr>`;
+  document.getElementById('monthlyTableBody').innerHTML=rows;
+}
+
+function renderQuarterly(data){
+  const q=state.currentQuarter; const monthIdxs=[q*3,q*3+1,q*3+2];
+  const label=['Q1 (Jan–Mar)','Q2 (Apr–Jun)','Q3 (Jul–Sep)','Q4 (Oct–Dec)'][q];
+  document.getElementById('qChartLabel').textContent='· '+label;
+  const qDays=data.dailyData.filter(d=>monthIdxs.includes(d.monthIdx));
+  const qTotal=qDays.reduce((s,d)=>s+d.amount,0);
+  document.getElementById('qKpis').innerHTML=[
+    {label:`${label} Total`,value:fmtCr(qTotal),sub:'',color:QUARTER_COLORS[q]},
+    {label:'Days in Quarter',value:qDays.length,sub:'',color:'var(--accent)'},
+  ].map(k=>`<div class="kpi" style="--bar-color:${k.color}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="sub">${k.sub}</div></div>`).join('');
+
+  const host=document.getElementById('qChartHost'); host.style.minWidth=Math.max(600,qDays.length*14)+'px';
+  const ctx=document.getElementById('chartQuarterDay').getContext('2d'); destroyChart(chartQuarterDay);
+  chartQuarterDay=new Chart(ctx,{type:'bar',data:{labels:qDays.map(d=>d.day+' '+d.monthName.slice(0,3)),datasets:[{data:qDays.map(d=>Math.round(d.amount)),backgroundColor:QUARTER_COLORS[q]+'cc',borderRadius:4,maxBarThickness:16}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmtAuto(c.raw)}}},scales:{x:{grid:{display:false},ticks:{color:'#8a93ac',maxRotation:90,minRotation:90,font:{size:9}}},y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8a93ac',callback:v=>fmtAuto(v)}}}}});
+
+  let rows=''; let qd=0, qa=0;
+  monthIdxs.forEach(mi=>{ const md=data.dailyData.filter(d=>d.monthIdx===mi); if(!md.length) return;
+    const mt=md.reduce((s,d)=>s+d.amount,0); rows+=`<tr class="month-sub"><td colspan="6">${md[0].monthName} — ${fmtAuto(mt)}</td></tr>`;
+    summarizeByWeek(md).forEach(w=>{ const pct=mt>0?(w.amount/mt*100).toFixed(2):'0.00'; const avg=w.count>0?w.amount/w.count:0; qd+=w.count; qa+=w.amount;
+      rows+=`<tr><td><span class="badge">${bucketLabel(w.bucket)}</span></td><td>${w.dateRange}</td><td class="center">${w.count}</td><td class="right">${pct}%</td><td class="right">${fmtAuto(w.amount)}</td><td class="right">${fmtAuto(avg)}</td></tr>`; }); });
+  rows+=`<tr class="total-row"><td>${label} Total</td><td></td><td class="center">${qd}</td><td class="right">100.00%</td><td class="right">${fmtAuto(qa)}</td><td class="right">${fmtAuto(qd>0?qa/qd:0)}</td></tr>`;
+  document.getElementById('quarterTableBody').innerHTML=rows;
+}
+
+function renderCalendar(data){
+  const mi=state.currentMonth; const md=data.dailyData.filter(d=>d.monthIdx===mi); const mt=md.reduce((s,d)=>s+d.amount,0);
+  document.getElementById('calKpis').innerHTML=[
+    {label:`${md[0].monthName} Total`,value:fmtAuto(mt),sub:'',color:'var(--accent)'},
+    {label:'Days',value:md.length,sub:'',color:'var(--accent2)'},
+  ].map(k=>`<div class="kpi" style="--bar-color:${k.color}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="sub">${k.sub}</div></div>`).join('');
+  let rows=''; md.forEach(d=>{ rows+=`<tr><td>${d.date.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</td><td>${dowNames[d.dow]}</td><td><span class="badge">${bucketLabel(d.bucket)}</span></td><td class="right">${fmtAuto(d.amount)}</td></tr>`; });
+  rows+=`<tr class="total-row"><td>Total</td><td></td><td></td><td class="right">${fmtAuto(mt)}</td></tr>`;
+  document.getElementById('calTableBody').innerHTML=rows;
+}
+
+function renderFlatVsSmoothed(data){
+  const scope=state.fvsScope, isAll=scope==='all';
+  const daysSet = isAll? data.dailyData : data.dailyData.filter(d=>d.monthIdx===+scope);
+  const baselineField = getBaselineField(); const baselineLabel = getBaselineLabel();
+
+  document.getElementById('fvsBaselineTh').textContent = `${baselineLabel} Multiplier`;
+
+  const budgetInScope=daysSet.reduce((s,d)=>s+d.amount,0);
+  const baseW=weightedOutput(daysSet,baselineField), smoothW=weightedOutput(daysSet,'amount');
+  const baseMult=budgetInScope>0?baseW/budgetInScope:1, smoothMult=budgetInScope>0?smoothW/budgetInScope:1;
+  const gainPct=(smoothMult-baseMult)/ (baseMult||1) *100, gainRupees=(smoothMult-baseMult)*budgetInScope;
+
+  const baseSub = state.fvsBaseline==='historical'
+    ? 'reconstructed from actual historical spend pattern (rescaled to this budget)'
+    : 'baseline — always 1.00x of Budget in Scope';
+
+  document.getElementById('fvsKpis').innerHTML=[
+    {label:'Budget in Scope',value:fmtCr(budgetInScope),sub:isAll?`Full Year ${state.year} · the only real ₹ figure`:(daysSet[0]?daysSet[0].monthName:''),color:'var(--accent)'},
+    {label:`${baselineLabel} Model Efficiency`,value:fmtX(baseMult),sub:baseSub,color:'var(--accent3)'},
+    {label:'Smoothed Model Efficiency',value:fmtX(smoothMult),sub:'our model, same budget',color:'var(--accent2)'},
+    {label:'Total Efficiency Gain',value:(gainPct>=0?'+':'')+gainPct.toFixed(1)+'%',sub:(gainRupees>=0?'≈ +':'≈ ')+fmtAuto(Math.abs(gainRupees))+` equivalent value vs ${baselineLabel.toLowerCase()}`,color:'var(--accent)'},
+  ].map(k=>`<div class="kpi" style="--bar-color:${k.color}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="sub">${k.sub}</div></div>`).join('');
+
+  destroyChart(chartFvs); const ctx=document.getElementById('chartFvs').getContext('2d');
+  if(isAll){
+    document.getElementById('fvsChartTitle').innerHTML=`Efficiency Multiplier by Month <span>(${baselineLabel} baseline vs Smoothed)</span>`;
+    const months=state.weights.months.map(m=>m.name.slice(0,3)); const fArr=[],sArr=[];
+    for(let mi=0;mi<12;mi++){ const md=data.dailyData.filter(d=>d.monthIdx===mi); const mb=md.reduce((s,d)=>s+d.amount,0);
+      fArr.push(+(weightedOutput(md,baselineField)/mb).toFixed(3)); sArr.push(+(weightedOutput(md,'amount')/mb).toFixed(3)); }
+    chartFvs=new Chart(ctx,{type:'bar',data:{labels:months,datasets:[{label:baselineLabel+' Model',data:fArr,backgroundColor:'#f472b6cc',borderRadius:6,maxBarThickness:26},{label:'Smoothed Model',data:sArr,backgroundColor:'#5eead4cc',borderRadius:6,maxBarThickness:26}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#e8ebf5',boxWidth:12,padding:14,font:{size:11}}},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.raw.toFixed(2)}x`}}},scales:{x:{grid:{display:false},ticks:{color:'#8a93ac'}},y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8a93ac',callback:v=>v.toFixed(2)+'x'}}}}});
+  } else {
+    document.getElementById('fvsChartTitle').innerHTML=`Daily Spend: ${baselineLabel} vs Smoothed <span>· ${daysSet[0].monthName}</span>`;
+    chartFvs=new Chart(ctx,{type:'line',data:{labels:daysSet.map(d=>d.day),datasets:[
+      {label:baselineLabel+' Spend',data:daysSet.map(d=>Math.round(d[baselineField])),borderColor:'#f472b6',borderWidth:2,borderDash:[6,4],pointRadius:0,tension:.2,yAxisID:'y'},
+      {label:'Smoothed Spend',data:daysSet.map(d=>Math.round(d.amount)),borderColor:'#5eead4',backgroundColor:'rgba(94,234,212,.12)',borderWidth:2.5,pointRadius:2,tension:.3,fill:true,yAxisID:'y'},
+      {label:'Efficiency Index',data:daysSet.map(d=>+d.effIndex.toFixed(2)),borderColor:'#fbbf24',borderWidth:1.5,borderDash:[2,3],pointRadius:0,tension:.3,yAxisID:'y1'}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#e8ebf5',boxWidth:12,padding:14,font:{size:11}}}},scales:{x:{grid:{display:false},ticks:{color:'#8a93ac'}},y:{position:'left',grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8a93ac',callback:v=>fmtAuto(v)}},y1:{position:'right',grid:{display:false},ticks:{color:'#fbbf24'}}}}});
+  }
+
+  let rows=''; let yB=0,yF=0,yS=0;
+  for(let mi=0;mi<12;mi++){ const md=data.dailyData.filter(d=>d.monthIdx===mi); if(!md.length) continue;
+    const mb=md.reduce((s,d)=>s+d.amount,0); const fW=weightedOutput(md,baselineField), sW=weightedOutput(md,'amount');
+    const fM=mb>0?fW/mb:1, sM=mb>0?sW/mb:1; yB+=mb; yF+=fW; yS+=sW;
+    const mGain = fM>0 ? (sM-fM)/fM*100 : 0;
+    rows+=`<tr><td>${md[0].monthName}</td><td class="right">${fmtAuto(mb)}</td><td class="right">${fmtX(fM)}</td><td class="right">${fmtX(sM)}</td><td class="right"><span class="badge good">${(mGain>=0?'+':'')+mGain.toFixed(1)}%</span></td></tr>`; }
+  const yFM=yB>0?yF/yB:1, ySM=yB>0?yS/yB:1;
+  const yGain = yFM>0 ? (ySM-yFM)/yFM*100 : 0;
+  rows+=`<tr class="total-row"><td>Full Year — Total Efficiency Gain</td><td class="right">${fmtAuto(yB)}</td><td class="right">${fmtX(yFM)}</td><td class="right">${fmtX(ySM)}</td><td class="right">${(yGain>=0?'+':'')+yGain.toFixed(1)}%</td></tr>`;
+  document.getElementById('fvsTableBody').innerHTML=rows;
+}
+
+function renderSmoothing(data){
+  document.getElementById('alphaVal').textContent=`${Math.round(state.smoothing.alpha*100)}% Weekforced / ${Math.round((1-state.smoothing.alpha)*100)}% Weekday`;
+  document.getElementById('lambdaVal').textContent=`${Math.round(state.smoothing.lambda*100)}%`;
+  const mi=state.smoothMonth; const md=data.dailyData.filter(d=>d.monthIdx===mi);
+  document.getElementById('smoothChartLabel').textContent='· '+(md[0]?md[0].monthName:'');
+  const nArr=md.map(d=>d.amount), lArr=md.map(d=>d.legacyAmount);
+  const ls=maxDayOverDaySwing(lArr), ns=maxDayOverDaySwing(nArr), imp=ls>0?((ls-ns)/ls*100):0;
+  document.getElementById('smoothKpis').innerHTML=[
+    {label:'Max Swing · Legacy Model',value:ls.toFixed(1)+'%',sub:'old multiplicative approach',color:'var(--accent3)'},
+    {label:'Max Swing · New Model',value:ns.toFixed(1)+'%',sub:'additive blend + smoothing',color:'var(--accent)'},
+    {label:'Volatility Reduced By',value:Math.max(0,imp).toFixed(0)+'%',sub:'lower is smoother',color:'var(--accent2)'},
+  ].map(k=>`<div class="kpi" style="--bar-color:${k.color}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="sub">${k.sub}</div></div>`).join('');
+  const ctx=document.getElementById('chartSmoothCompare').getContext('2d'); destroyChart(chartSmoothCompare);
+  chartSmoothCompare=new Chart(ctx,{type:'line',data:{labels:md.map(d=>d.day),datasets:[
+    {label:'Legacy Model',data:lArr.map(v=>Math.round(v)),borderColor:'#f472b6',backgroundColor:'rgba(244,114,182,.08)',borderWidth:2,tension:.3,pointRadius:2,fill:true},
+    {label:'New Smoothed Model',data:nArr.map(v=>Math.round(v)),borderColor:'#5eead4',backgroundColor:'rgba(94,234,212,.12)',borderWidth:2.5,tension:.3,pointRadius:2,fill:true}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#e8ebf5',boxWidth:12,padding:14,font:{size:11}}}},scales:{x:{grid:{display:false},ticks:{color:'#8a93ac'}},y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8a93ac',callback:v=>fmtAuto(v)}}}}});
+}
+
+function renderWeightsTable(){
+  const body=document.getElementById('weightsBody');
+  body.innerHTML=state.weights.months.map((m,idx)=>{ const cells=WEIGHT_KEYS.map(k=>`<td><input type="number" data-idx="${idx}" data-key="${k}" value="${m[k]}"></td>`).join('');
+    return `<tr><td class="month-name">${m.name}</td>${cells}</tr>`; }).join('');
+  body.querySelectorAll('input').forEach(inp=>{ inp.addEventListener('input',e=>{ const idx=+e.target.dataset.idx,key=e.target.dataset.key;
+    state.weights.months[idx][key]=parseFloat(e.target.value)||0; saveWeights(); renderWeightsFooter(); recalcAndRender(); }); });
+  renderWeightsFooter();
+}
+function renderWeightsFooter(){ const st=state.weights.months.reduce((s,m)=>s+(Number(m.monthly)||0),0);
+  const dash=WEIGHT_KEYS.slice(1).map(()=>'<td class="center">—</td>').join('');
+  document.getElementById('weightsFoot').innerHTML=`<tr class="total-row"><td>Total</td><td class="right">${st}</td>${dash}</tr>`; }
+
+function recalcAndRender(){
+  const data=computeAll(); document.getElementById('totalChip').textContent='= '+fmtCr(data.totalRupees);
+  const activeBtn=document.querySelector('.nav button.active[data-tab]'); const active=activeBtn?activeBtn.dataset.tab:'dashboard';
+  if(active==='dashboard') renderDashboard(data);
+  if(active==='quarterly') renderQuarterly(data);
+  if(active==='calendar') renderCalendar(data);
+  if(active==='flatvs') renderFlatVsSmoothed(data);
+  if(active==='smoothing') renderSmoothing(data);
+  if(active==='scoreeng') renderScoreEngineering();
+  window._bpsData=data;
+}
+
+function downloadCSV(rows, filename){
+  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+
+/* ================= SCORE ENGINEERING (pivot-based, validated, sum-to-100) ================= */
+const WEEK_PIVOT_DATA = {
+  'AMJ-25': { W0:{eff:2.32,cac:294,act:0.3804,w1:0.729,w2:0.6266,w3:0.5985}, W1:{eff:2.30,cac:302,act:0.3814,w1:0.731,w2:0.6307,w3:0.6275}, W2:{eff:2.31,cac:317,act:0.3872,w1:0.721,w2:0.6413,w3:0.6182}, W3:{eff:2.41,cac:319,act:0.3688,w1:0.732,w2:0.6308,w3:0.5987}, 'W3-ext':{eff:2.73,cac:302,act:0.3709,w1:0.728,w2:0.6218,w3:0.5912} },
+  'AMJ-26': { W0:{eff:3.26,cac:282,act:0.4638,w1:0.723,w2:0.6919,w3:0.671}, W1:{eff:3.59,cac:274,act:0.4768,w1:0.708,w2:0.6788,w3:0.5303}, W2:{eff:3.29,cac:273,act:0.4673,w1:0.71,w2:0.55,w3:0.4883}, W3:{eff:3.34,cac:290,act:0.4846,w1:0.606,w2:0.5266,w3:0.5121}, 'W3-ext':{eff:3.75,cac:312,act:0.4756,w1:0.65,w2:0.627,w3:0.6108} },
+  'JAS-25': { W0:{eff:7.14,cac:178,act:0.4694,w1:0.717,w2:0.6289,w3:0.6004}, W1:{eff:7.86,cac:185,act:0.4856,w1:0.726,w2:0.6359,w3:0.6448}, W2:{eff:5.63,cac:184,act:0.4852,w1:0.737,w2:0.6707,w3:0.6606}, W3:{eff:6.51,cac:167,act:0.4842,w1:0.73,w2:0.6476,w3:0.642}, 'W3-ext':{eff:7.45,cac:157,act:0.4867,w1:0.72,w2:0.6347,w3:0.6167} },
+  'JFM-25': { W0:{eff:4.46,cac:243,act:0.427,w1:0.74,w2:0.6367,w3:0.6275}, W1:{eff:2.67,cac:265,act:0.4221,w1:0.725,w2:0.6244,w3:0.6268}, W2:{eff:2.82,cac:266,act:0.4332,w1:0.74,w2:0.6527,w3:0.6321}, W3:{eff:3.11,cac:244,act:0.4084,w1:0.74,w2:0.6325,w3:0.6085}, 'W3-ext':{eff:3.54,cac:265,act:0.3741,w1:0.737,w2:0.6339,w3:0.5971} },
+  'JFM-26': { W0:{eff:4.42,cac:195,act:0.4922,w1:0.771,w2:0.7408,w3:0.7285}, W1:{eff:3.78,cac:200,act:0.4957,w1:0.749,w2:0.7249,w3:0.7217}, W2:{eff:3.47,cac:205,act:0.4951,w1:0.742,w2:0.7266,w3:0.7157}, W3:{eff:2.97,cac:200,act:0.4889,w1:0.754,w2:0.7342,w3:0.7111}, 'W3-ext':{eff:2.98,cac:201,act:0.4657,w1:0.751,w2:0.7276,w3:0.7075} },
+  'OND-25': { W0:{eff:5.2,cac:180,act:0.5247,w1:0.778,w2:0.7415,w3:0.726}, W1:{eff:4.47,cac:190,act:0.5277,w1:0.77,w2:0.7374,w3:0.7371}, W2:{eff:3.9,cac:217,act:0.52,w1:0.763,w2:0.7441,w3:0.7426}, W3:{eff:4.27,cac:222,act:0.5181,w1:0.777,w2:0.7591,w3:0.7385}, 'W3-ext':{eff:2.61,cac:220,act:0.52,w1:0.771,w2:0.7439,w3:0.7201} }
+};
+const WEEKDAY_PIVOT_DATA = {
+  'AMJ-25': {1:{eff:2.57,cac:314,act:0.379,w1:0.734,w2:0.6351,w3:0.613},2:{eff:2.73,cac:314,act:0.3799,w1:0.728,w2:0.6317,w3:0.6122},3:{eff:2.4,cac:296,act:0.3897,w1:0.73,w2:0.6355,w3:0.6152},4:{eff:2.77,cac:298,act:0.3786,w1:0.724,w2:0.6326,w3:0.6123},5:{eff:2.76,cac:298,act:0.3784,w1:0.728,w2:0.6288,w3:0.604},6:{eff:2.75,cac:315,act:0.3736,w1:0.727,w2:0.6301,w3:0.6054},7:{eff:2.41,cac:316,act:0.3734,w1:0.726,w2:0.6273,w3:0.6056}},
+  'AMJ-26': {1:{eff:3.34,cac:281,act:0.4728,w1:0.688,w2:0.619,w3:0.5605},2:{eff:3.75,cac:275,act:0.4763,w1:0.675,w2:0.6035,w3:0.5466},3:{eff:3.82,cac:282,act:0.4754,w1:0.721,w2:0.6465,w3:0.5867},4:{eff:3.77,cac:278,act:0.4706,w1:0.681,w2:0.6097,w3:0.5468},5:{eff:3.59,cac:287,act:0.4699,w1:0.685,w2:0.6158,w3:0.5504},6:{eff:3.84,cac:278,act:0.4775,w1:0.683,w2:0.6111,w3:0.5503},7:{eff:3.68,cac:288,act:0.4668,w1:0.686,w2:0.6164,w3:0.5556}},
+  'JAS-25': {1:{eff:6.51,cac:176,act:0.4911,w1:0.734,w2:0.6532,w3:0.6431},2:{eff:6.29,cac:178,act:0.4861,w1:0.725,w2:0.6418,w3:0.6331},3:{eff:7.45,cac:174,act:0.4731,w1:0.727,w2:0.6469,w3:0.6346},4:{eff:5.55,cac:172,act:0.4715,w1:0.721,w2:0.6412,w3:0.6301},5:{eff:4.97,cac:183,act:0.4683,w1:0.725,w2:0.6413,w3:0.6308},6:{eff:5.17,cac:179,act:0.4921,w1:0.731,w2:0.6476,w3:0.6374},7:{eff:6.15,cac:174,act:0.4938,w1:0.73,w2:0.6438,w3:0.6384}},
+  'JFM-25': {1:{eff:2.64,cac:263,act:0.41,w1:0.742,w2:0.6444,w3:0.6296},2:{eff:3.54,cac:262,act:0.42,w1:0.737,w2:0.6297,w3:0.6165},3:{eff:3.04,cac:255,act:0.4134,w1:0.729,w2:0.6301,w3:0.6187},4:{eff:3.03,cac:248,act:0.4298,w1:0.742,w2:0.637,w3:0.6298},5:{eff:3.12,cac:255,act:0.4279,w1:0.736,w2:0.6435,w3:0.6344},6:{eff:3.11,cac:254,act:0.4144,w1:0.735,w2:0.6369,w3:0.6192},7:{eff:2.73,cac:247,act:0.4185,w1:0.73,w2:0.63,w3:0.6116}},
+  'JFM-26': {1:{eff:3.08,cac:208,act:0.4869,w1:0.755,w2:0.734,w3:0.7222},2:{eff:3.07,cac:205,act:0.495,w1:0.751,w2:0.7286,w3:0.715},3:{eff:2.98,cac:197,act:0.4906,w1:0.753,w2:0.7305,w3:0.7181},4:{eff:3.37,cac:196,act:0.4944,w1:0.755,w2:0.7314,w3:0.7187},5:{eff:3.3,cac:199,act:0.4894,w1:0.752,w2:0.7301,w3:0.7179},6:{eff:3.2,cac:198,act:0.4914,w1:0.752,w2:0.7297,w3:0.717},7:{eff:2.97,cac:199,act:0.4908,w1:0.756,w2:0.7339,w3:0.7206}},
+  'OND-25': {1:{eff:4.27,cac:205,act:0.5151,w1:0.778,w2:0.7534,w3:0.7436},2:{eff:4.75,cac:202,act:0.532,w1:0.772,w2:0.7448,w3:0.7355},3:{eff:4.19,cac:200,act:0.5241,w1:0.768,w2:0.7413,w3:0.7313},4:{eff:2.61,cac:205,act:0.5219,w1:0.771,w2:0.7438,w3:0.7325},5:{eff:4.28,cac:200,act:0.5299,w1:0.769,w2:0.7417,w3:0.7306},6:{eff:4.19,cac:204,act:0.5186,w1:0.771,w2:0.7454,w3:0.735},7:{eff:4.41,cac:209,act:0.5165,w1:0.773,w2:0.7461,w3:0.7373}}
+};
+const DOCUMENTED_WEEK = {
+  'AMJ-25':{W0:0.363,W1:0.505,W2:0.371,W3:0.230,'W3-ext':0.547},
+  'AMJ-26':{W0:0.454,W1:0.712,W2:0.312,W3:0.278,'W3-ext':0.622},
+  'JAS-25':{W0:0.321,W1:0.642,W2:0.399,W3:0.552,'W3-ext':0.688},
+  'JFM-26':{W0:0.988,W1:0.484,W2:0.236,W3:0.258,'W3-ext':0.092},
+  'OND-25':{W0:0.748,W1:0.612,W2:0.354,W3:0.556,'W3-ext':0.029}
+};
+const DOCUMENTED_WEEKDAY = {
+  'AMJ-25':{1:0.538,2:0.584,3:0.581,4:0.741,5:0.623,6:0.436,7:0.011},
+  'AMJ-26':{1:0.262,2:0.617,3:0.857,4:0.562,5:0.305,6:0.699,7:0.348},
+  'JAS-25':{1:0.765,2:0.433,3:0.710,4:0.306,5:0.038,6:0.385,7:0.610},
+  'JFM-26':{1:0.410,2:0.250,3:0.368,4:0.880,5:0.607,6:0.527,7:0.482},
+  'OND-25':{1:0.699,2:0.758,3:0.549,4:0.187,5:0.605,6:0.522,7:0.482}
+};
+
+function normalizeArrGeneric(arr, invert){
+  const min=Math.min(...arr), max=Math.max(...arr);
+  return arr.map(v=>{
+    if(max<=min) return 0.5;
+    const n=(v-min)/(max-min);
+    return invert ? 1-n : n;
+  });
+}
+function getNormalizedWeights(){
+  const e=+document.getElementById('wEffSlider').value, c=+document.getElementById('wCacSlider').value,
+        r=+document.getElementById('wRenSlider').value, a=+document.getElementById('wActSlider').value;
+  const total=e+c+r+a||1;
+  return { eff:e/total, cac:c/total, ren:r/total, act:a/total };
+}
+function updateWeightLabels(){
+  const w=getNormalizedWeights();
+  document.getElementById('wEffVal').textContent=Math.round(w.eff*100)+'%';
+  document.getElementById('wCacVal').textContent=Math.round(w.cac*100)+'%';
+  document.getElementById('wRenVal').textContent=Math.round(w.ren*100)+'%';
+  document.getElementById('wActVal').textContent=Math.round(w.act*100)+'%';
+}
+['wEffSlider','wCacSlider','wRenSlider','wActSlider'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', ()=>{ updateWeightLabels(); if(document.getElementById('panel-scoreeng').classList.contains('active')) renderScoreEngineering(); });
+});
+document.getElementById('resetWeightsScoreBtn').addEventListener('click', ()=>{
+  document.getElementById('wEffSlider').value=40; document.getElementById('wCacSlider').value=20;
+  document.getElementById('wRenSlider').value=30; document.getElementById('wActSlider').value=10;
+  updateWeightLabels(); renderScoreEngineering();
+});
+
+function computeCompositeForQuarter(quarterLabel, isWeek){
+  const dataset = isWeek ? WEEK_PIVOT_DATA[quarterLabel] : WEEKDAY_PIVOT_DATA[quarterLabel];
+  if(!dataset) return null;
+  const keys = isWeek ? WEEK_ORDER : [1,2,3,4,5,6,7];
+  const w = getNormalizedWeights();
+  const effArr = keys.map(k=>dataset[k].eff);
+  const cacArr = keys.map(k=>dataset[k].cac);
+  const actArr = keys.map(k=>dataset[k].act);
+  const renArr = keys.map(k=>(dataset[k].w1+dataset[k].w2+dataset[k].w3)/3);
+  const effN = normalizeArrGeneric(effArr,false), cacN = normalizeArrGeneric(cacArr,true),
+        actN = normalizeArrGeneric(actArr,false), renN = normalizeArrGeneric(renArr,false);
+  return keys.map((k,i)=>({ key:k, score: w.eff*effN[i] + w.cac*cacN[i] + w.ren*renN[i] + w.act*actN[i] }));
+}
+
+function scaleToRange(values, min=5, max=45){
+  const lo=Math.min(...values), hi=Math.max(...values);
+  return values.map(v=> hi<=lo ? (min+max)/2 : min + (v-lo)/(hi-lo) * (max-min));
+}
+function capAdjacentDiff(arr, maxDiff, circular){
+  let vals = arr.slice(); const n=vals.length;
+  let changed=true, iter=0;
+  while(changed && iter<300){
+    changed=false;
+    for(let i=0;i<n;i++){
+      const j=(i+1)%n; if(!circular && j===0) continue;
+      const diff=vals[j]-vals[i];
+      if(Math.abs(diff)>maxDiff){
+        const excess=Math.abs(diff)-maxDiff, adj=excess/2;
+        if(diff>0){ vals[i]+=adj; vals[j]-=adj; } else { vals[i]-=adj; vals[j]+=adj; }
+        changed=true;
+      }
+    }
+    iter++;
+  }
+  return vals;
+}
+function normalizeSumTo100(arr, circular){
+  let vals = arr.slice();
+  let sum = vals.reduce((a,b)=>a+b,0) || 1;
+  vals = vals.map(v => v * (100/sum));
+  vals = capAdjacentDiff(vals, 10, circular);
+  sum = vals.reduce((a,b)=>a+b,0) || 1;
+  vals = vals.map(v => v * (100/sum));
+  return vals;
+}
+function roundToIntegerSum100(arr){
+  const floors = arr.map(v=>Math.floor(v));
+  let remainder = 100 - floors.reduce((a,b)=>a+b,0);
+  const withFrac = arr.map((v,i)=>({ i, frac: v - floors[i] }));
+  withFrac.sort((a,b)=>b.frac-a.frac);
+  const result = floors.slice();
+  for(let k=0; k<remainder && k<withFrac.length; k++){ result[withFrac[k].i] += 1; }
+  return result;
+}
+
+const WEEKDAY_LABELS7 = {1:'Sunday',2:'Monday',3:'Tuesday',4:'Wednesday',5:'Thursday',6:'Friday',7:'Saturday'};
+
+function renderScoreEngineering(){
+  updateWeightLabels();
+  const q = document.getElementById('seQuarterSelect').value;
+
+  const weekResults = computeCompositeForQuarter(q, true);
+  const dayResults = computeCompositeForQuarter(q, false);
+
+  const docWeek = DOCUMENTED_WEEK[q], docDay = DOCUMENTED_WEEKDAY[q];
+  let valHtml = '';
+  if(docWeek){
+    let maxDelta=0;
+    weekResults.forEach(r=>{ const d=Math.abs(r.score-docWeek[r.key]); if(d>maxDelta) maxDelta=d; });
+    valHtml += `<div><b>Week scores</b> — max deviation from documented Table 1: <span class="badge ${maxDelta<0.02?'good':'bad'}">${maxDelta.toFixed(3)}</span></div>`;
+  } else {
+    valHtml += `<div class="sub">No documented Table 1 reference available for ${q}.</div>`;
+  }
+  if(docDay){
+    let maxDeltaD=0;
+    dayResults.forEach(r=>{ const d=Math.abs(r.score-docDay[r.key]); if(d>maxDeltaD) maxDeltaD=d; });
+    valHtml += `<div style="margin-top:8px;"><b>Weekday scores</b> — max deviation from documented Table 2: <span class="badge ${maxDeltaD<0.02?'good':'bad'}">${maxDeltaD.toFixed(3)}</span></div>`;
+  } else {
+    valHtml += `<div class="sub" style="margin-top:8px;">No documented Table 2 reference available for ${q}.</div>`;
+  }
+  valHtml += `<div class="sub" style="margin-top:8px;">Small deviations are expected once you move weights away from 40/20/30/10.</div>`;
+  document.getElementById('seValidation').innerHTML = valHtml;
+
+  const sortedWeeks = [...weekResults].sort((a,b)=>b.score-a.score);
+  const sortedDays = [...dayResults].sort((a,b)=>b.score-a.score);
+  const bw1=sortedWeeks[0], bw2=sortedWeeks[1], ww=sortedWeeks[sortedWeeks.length-1];
+  const bd1=sortedDays[0], bd2=sortedDays[1], wd=sortedDays[sortedDays.length-1];
+
+  document.getElementById('seWeekBW').innerHTML = `
+    <div class="sub" style="margin-bottom:8px;">Best #1: <span class="badge good">${bucketLabel(bw1.key)} · ${bw1.score.toFixed(3)}</span></div>
+    <div class="sub" style="margin-bottom:8px;">Best #2: <span class="badge good">${bucketLabel(bw2.key)} · ${bw2.score.toFixed(3)}</span></div>
+    <div class="sub">Worst: <span class="badge bad">${bucketLabel(ww.key)} · ${ww.score.toFixed(3)}</span></div>`;
+  document.getElementById('seDayBW').innerHTML = `
+    <div class="sub" style="margin-bottom:8px;">Best #1: <span class="badge good">${WEEKDAY_LABELS7[bd1.key]} · ${bd1.score.toFixed(3)}</span></div>
+    <div class="sub" style="margin-bottom:8px;">Best #2: <span class="badge good">${WEEKDAY_LABELS7[bd2.key]} · ${bd2.score.toFixed(3)}</span></div>
+    <div class="sub">Worst: <span class="badge bad">${WEEKDAY_LABELS7[wd.key]} · ${wd.score.toFixed(3)}</span></div>`;
+
+  document.getElementById('seWeekTableBody').innerHTML = weekResults.map(r=>`<tr><td>${bucketLabel(r.key)}</td><td class="right">${r.score.toFixed(3)}</td></tr>`).join('');
+  document.getElementById('seDayTableBody').innerHTML = dayResults.map(r=>`<tr><td>${WEEKDAY_LABELS7[r.key]}</td><td class="right">${r.score.toFixed(3)}</td></tr>`).join('');
+
+  const weekScaled = scaleToRange(weekResults.map(r=>r.score),5,45);
+  const dayScaled = scaleToRange(dayResults.map(r=>r.score),5,45);
+  const weekCapped = capAdjacentDiff(weekScaled,10,false);
+  const dayCapped = capAdjacentDiff(dayScaled,10,true);
+  const weekSum100 = normalizeSumTo100(weekCapped, false);
+  const daySum100 = normalizeSumTo100(dayCapped, true);
+  const weekRounded = roundToIntegerSum100(weekSum100);
+  const dayRounded = roundToIntegerSum100(daySum100);
+
+  document.getElementById('seWeekSuggestBody').innerHTML = weekResults.map((r,i)=>`<tr><td>${bucketLabel(r.key)}</td><td class="right">${weekRounded[i]}</td></tr>`).join('');
+  document.getElementById('seDaySuggestBody').innerHTML = dayResults.map((r,i)=>`<tr><td>${WEEKDAY_LABELS7[r.key]}</td><td class="right">${dayRounded[i]}</td></tr>`).join('');
+
+  document.getElementById('seWeekSuggestFoot').innerHTML = `<tr class="total-row"><td>Sum</td><td class="right">${weekRounded.reduce((a,b)=>a+b,0)}</td></tr>`;
+  document.getElementById('seDaySuggestFoot').innerHTML = `<tr class="total-row"><td>Sum</td><td class="right">${dayRounded.reduce((a,b)=>a+b,0)}</td></tr>`;
+
+  window._seCurrent = { quarter:q, weekKeys:weekResults.map(r=>r.key), weekSuggested:weekRounded, dayKeys:dayResults.map(r=>r.key), daySuggested:dayRounded };
+}
+
+document.getElementById('seQuarterSelect').addEventListener('change', renderScoreEngineering);
+
+document.getElementById('applyToWeightsBtn').addEventListener('click', ()=>{
+  const cur = window._seCurrent; if(!cur) return;
+  const prefix = cur.quarter.split('-')[0].toUpperCase();
+  const monthIdxs = QUARTER_MONTH_MAP[prefix];
+  const confirmBox = document.getElementById('applyConfirm');
+  if(!monthIdxs){
+    confirmBox.innerHTML = `<div class="warn-box">Could not map "${cur.quarter}" to calendar months.</div>`;
+    return;
+  }
+  const weekMap={}; cur.weekKeys.forEach((k,i)=>{ weekMap[k]=cur.weekSuggested[i]; });
+  const dayMap={}; cur.dayKeys.forEach((k,i)=>{ dayMap[k]=cur.daySuggested[i]; });
+
+  monthIdxs.forEach(mi=>{
+    const m = state.weights.months[mi];
+    if(weekMap['W0']!==undefined) m.w0=weekMap['W0'];
+    if(weekMap['W1']!==undefined) m.w1=weekMap['W1'];
+    if(weekMap['W2']!==undefined) m.w2=weekMap['W2'];
+    if(weekMap['W3']!==undefined) m.w3=weekMap['W3'];
+    if(weekMap['W3-ext']!==undefined) m.w3ext=weekMap['W3-ext'];
+    if(dayMap[1]!==undefined) m.sun=dayMap[1];
+    if(dayMap[2]!==undefined) m.mon=dayMap[2];
+    if(dayMap[3]!==undefined) m.tue=dayMap[3];
+    if(dayMap[4]!==undefined) m.wed=dayMap[4];
+    if(dayMap[5]!==undefined) m.thu=dayMap[5];
+    if(dayMap[6]!==undefined) m.fri=dayMap[6];
+    if(dayMap[7]!==undefined) m.sat=dayMap[7];
+  });
+  saveWeights();
+  const monthNames = monthIdxs.map(i=>state.weights.months[i].name).join(', ');
+  confirmBox.innerHTML = `<div class="warn-box" style="background:rgba(94,234,212,.08);border-color:rgba(94,234,212,.3);color:var(--accent);">Applied ${cur.quarter}'s suggested scores (sum = 100 each) to: ${monthNames}. Open the Weights Editor tab to review.</div>`;
+  recalcAndRender();
+});
+
+/* ------------------- EVENTS ------------------- */
+document.getElementById('exportYearBtn').addEventListener('click', ()=>{
+  const data=window._bpsData||computeAll(); const rows=[['Date','Month','Day','Weekday','Week Tag / Bucket','Amount (₹)']];
+  data.dailyData.forEach(d=>rows.push([d.date.toLocaleDateString('en-IN'),d.monthName,d.day,dowNames[d.dow],bucketLabel(d.bucket),Math.round(d.amount)]));
+  downloadCSV(rows, `budget_phasing_${state.year}.csv`);
+});
+document.getElementById('exportQuarterBtn').addEventListener('click', ()=>{
+  const data=window._bpsData||computeAll(); const q=state.currentQuarter; const monthIdxs=[q*3,q*3+1,q*3+2];
+  const rows=[['Month','Week Tag / Bucket','Date Range','Days','Amount (₹)','Avg Spend/Day (₹)']];
+  monthIdxs.forEach(mi=>{ const md=data.dailyData.filter(d=>d.monthIdx===mi); if(!md.length) return;
+    summarizeByWeek(md).forEach(w=>{ const avg=w.count>0?w.amount/w.count:0; rows.push([md[0].monthName,bucketLabel(w.bucket),w.dateRange,w.count,Math.round(w.amount),Math.round(avg)]); }); });
+  downloadCSV(rows, `budget_phasing_Q${q+1}_${state.year}_weekwise.csv`);
+});
+document.getElementById('exportFvsBtn').addEventListener('click', ()=>{
+  const data=window._bpsData||computeAll(); const baselineField=getBaselineField(); const baselineLabel=getBaselineLabel();
+  const rows=[['Month','Budget in Scope (₹)',`${baselineLabel} Multiplier`,'Smoothed Multiplier','Efficiency Gain (%)']];
+  let yB=0,yF=0,yS=0;
+  for(let mi=0; mi<12; mi++){ const md=data.dailyData.filter(d=>d.monthIdx===mi); if(!md.length) continue;
+    const mb=md.reduce((s,d)=>s+d.amount,0); const fW=weightedOutput(md,baselineField), sW=weightedOutput(md,'amount');
+    const fM=mb>0?fW/mb:1, sM=mb>0?sW/mb:1; yB+=mb; yF+=fW; yS+=sW;
+    const mGain = fM>0 ? (sM-fM)/fM*100 : 0;
+    rows.push([md[0].monthName, Math.round(mb), fM.toFixed(3), sM.toFixed(3), mGain.toFixed(1)]); }
+  const yFM=yB>0?yF/yB:1, ySM=yB>0?yS/yB:1; const yGain = yFM>0 ? (ySM-yFM)/yFM*100 : 0;
+  rows.push(['Full Year — Total Efficiency Gain', Math.round(yB), yFM.toFixed(3), ySM.toFixed(3), yGain.toFixed(1)]);
+  downloadCSV(rows, `${state.fvsBaseline}_vs_smoothed_${state.year}.csv`);
+});
+
+document.getElementById('fvsBaselineToggle').addEventListener('click', e=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  document.querySelectorAll('#fvsBaselineToggle button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  state.fvsBaseline = btn.dataset.baseline;
+  recalcAndRender();
+});
+
+document.getElementById('nav').addEventListener('click', e=>{
+  const btn=e.target.closest('button'); if(!btn) return;
+  if(btn.id==='moreToggle'){ const open=!document.getElementById('moreSub').classList.contains('open');
+    document.getElementById('moreSub').classList.toggle('open',open); btn.classList.toggle('open',open); return; }
+  if(!btn.dataset.tab) return;
+  document.querySelectorAll('.nav button[data-tab]').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+  if(document.getElementById('moreSub').contains(btn)){ document.getElementById('moreSub').classList.add('open'); document.getElementById('moreToggle').classList.add('open'); }
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+  if(btn.dataset.tab==='weights') renderWeightsTable();
+  recalcAndRender();
+});
+
+document.getElementById('inputBudget').addEventListener('input', e=>{ state.budget=parseFloat(e.target.value)||0; recalcAndRender(); });
+document.getElementById('inputYear').addEventListener('input', e=>{ state.year=parseInt(e.target.value)||new Date().getFullYear(); recalcAndRender(); });
+document.getElementById('qtabs').addEventListener('click', e=>{ const btn=e.target.closest('button'); if(!btn) return;
+  document.querySelectorAll('#qtabs button').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); state.currentQuarter=+btn.dataset.q; recalcAndRender(); });
+document.getElementById('calMonthSelect').addEventListener('change', e=>{ state.currentMonth=+e.target.value; recalcAndRender(); });
+document.getElementById('fvsScopeSelect').addEventListener('change', e=>{ state.fvsScope=e.target.value; recalcAndRender(); });
+document.getElementById('resetWeightsBtn').addEventListener('click', ()=>{ if(confirm('Reset all weights to the original defaults?')){ state.weights=JSON.parse(JSON.stringify(DEFAULT_WEIGHTS)); saveWeights(); renderWeightsTable(); recalcAndRender(); } });
+document.getElementById('alphaSlider').addEventListener('input', e=>{ state.smoothing.alpha=(+e.target.value)/100; saveSmoothing(); recalcAndRender(); });
+document.getElementById('lambdaSlider').addEventListener('input', e=>{ state.smoothing.lambda=(+e.target.value)/100; saveSmoothing(); recalcAndRender(); });
+document.getElementById('rollingToggle').addEventListener('change', e=>{ state.smoothing.rollingEnabled=e.target.checked; saveSmoothing(); recalcAndRender(); });
+document.getElementById('rollingWindowSelect').addEventListener('change', e=>{ state.smoothing.rollingWindow=+e.target.value; saveSmoothing(); recalcAndRender(); });
+document.getElementById('smoothMonthSelect').addEventListener('change', e=>{ state.smoothMonth=+e.target.value; recalcAndRender(); });
+document.getElementById('resetSmoothingBtn').addEventListener('click', ()=>{
+  state.smoothing=JSON.parse(JSON.stringify(DEFAULT_SMOOTHING)); saveSmoothing();
+  document.getElementById('alphaSlider').value=state.smoothing.alpha*100; document.getElementById('lambdaSlider').value=state.smoothing.lambda*100;
+  document.getElementById('rollingToggle').checked=state.smoothing.rollingEnabled; document.getElementById('rollingWindowSelect').value=state.smoothing.rollingWindow;
+  recalcAndRender();
+});
+
+function init(){
+  const monthSel=document.getElementById('calMonthSelect'); monthSel.innerHTML=DEFAULT_WEIGHTS.months.map((m,i)=>`<option value="${i}">${m.name}</option>`).join('');
+  const smoothSel=document.getElementById('smoothMonthSelect'); smoothSel.innerHTML=DEFAULT_WEIGHTS.months.map((m,i)=>`<option value="${i}" ${i===state.smoothMonth?'selected':''}>${m.name}</option>`).join('');
+  const fvsSel=document.getElementById('fvsScopeSelect'); fvsSel.innerHTML='<option value="all">Full Year — all 12 months</option>'+DEFAULT_WEIGHTS.months.map((m,i)=>`<option value="${i}">${m.name} only</option>`).join('');
+  document.getElementById('alphaSlider').value=state.smoothing.alpha*100; document.getElementById('lambdaSlider').value=state.smoothing.lambda*100;
+  document.getElementById('rollingToggle').checked=state.smoothing.rollingEnabled; document.getElementById('rollingWindowSelect').value=state.smoothing.rollingWindow;
+  renderWeightsTable();
+  updateWeightLabels();
+  recalcAndRender();
+}
+init();
+</script>
+</body>
+</html>
+
+							<script>
+                            	
+							</script>
+                        </body>
+                        </html>
+                    
